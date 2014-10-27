@@ -25,7 +25,7 @@
     'category' : 'CRM',
     'description' : 'PDBI CRM Customization Module',
     'website': 'http://www.futuratechgroup.com',
-    'depends' : ['base','purchase','stock','product','account','account_voucher','sale','sale_crm','report_webkit'],
+    'depends' : ['base'],
     'data': [        
              'view/res_partner_view.xml',                
             ],
