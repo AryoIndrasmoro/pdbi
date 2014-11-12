@@ -28,7 +28,7 @@ class res_partner(osv.osv):
     _columns = {        
         'type_id'         :fields.many2one('customer.type', 'Type'),
         'industry_id'     :fields.many2one('customer.industry', 'Industry'),
-        'last_name'       :fields.char('Last Name')
+        'last_name'       :fields.char('Last Name'),        
     }        
 
 res_partner()
@@ -50,3 +50,13 @@ class customer_industry(osv.osv):
     }
     
 customer_industry()
+
+class event_pdbi(osv.osv):
+    _name = 'event.pdbi'
+    _columns = {
+        'name'              : fields.char('Event Name'),                    
+        'date'              : fields.date('Date'),
+        'customer_ids'      : fields.many2many('res.partner','res_partner_event_pdbi_rel','eid','pid','Customers'),
+    }
+    
+event_pdbi()

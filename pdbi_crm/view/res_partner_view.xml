@@ -12,7 +12,7 @@
             	<xpath expr="/form/sheet/group/group/field[@name='website']" position="after">
             		<field name="type_id"/>
             		<field name="industry_id"/>
-            	</xpath>
+            	</xpath>            	
         	</field>
         </record>	    		
         
@@ -85,5 +85,46 @@
         
     	<menuitem action="customer_industry_action_tree" 
     		id="menu_customer_industry" parent="base.menu_sales" sequence="1"/>
+    		
+    	<record id="event_pdbi_tree_view" model="ir.ui.view">
+            <field name="name">event.pdbi.tree</field>
+            <field name="model">event.pdbi</field>            
+            <field name="arch" type="xml">   
+				<tree string="PDBI Events">					
+					<field name="name" required="True"/>
+					<field name="date"/>																				
+				</tree>
+            </field>
+        </record>
+    	    	
+    	<record id="event_pdbi_form_view" model="ir.ui.view">
+            <field name="name">event.pdbi.form</field>
+            <field name="model">event.pdbi</field>            
+            <field name="arch" type="xml">   
+				<form string="PDBI Events" version="7.0">
+					<header>
+						<button string="Send Email"/>
+					</header>				
+					<sheet>			
+						<group>					
+							<field name="name" required="True"/>
+							<field name="date"/>						
+							<field name="customer_ids"/>									
+						</group>					
+					</sheet>
+				</form>
+            </field>
+        </record>
+        
+    	<record id="event_pdbi_action_tree" model="ir.actions.act_window">
+            <field name="name">PDBI Events</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">event.pdbi</field>            
+            <field name="view_type">form</field>
+          	<field name="view_id" ref="event_pdbi_tree_view"/>                                                           
+        </record>
+        
+    	<menuitem action="event_pdbi_action_tree" 
+    		id="menu_event_pdbi" parent="base.menu_sales" sequence="1"/>
 	</data>
 </openerp>
