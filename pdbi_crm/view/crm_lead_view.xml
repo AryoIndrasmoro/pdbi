@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>			                   
+		<record model="ir.ui.view" id="crm_case_form_view_leads_pdbi">
+            <field name="name">crm.case.form.view.leads.pdbi</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>            
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/group/group/field[@name='type']" position="before">
+                	<field name="type_id"/>
+                </xpath>
+            </field>
+        </record>
+	</data>
+</openerp>
