@@ -21,6 +21,11 @@
 
 from openerp.osv import fields,osv
 import openerp.addons.decimal_precision as dp
+import time
+from datetime import date
+from datetime import datetime
+from datetime import timedelta
+from dateutil import relativedelta
 #from openerp.tools.translate import _
 
 class res_partner(osv.osv):
@@ -28,9 +33,16 @@ class res_partner(osv.osv):
     _columns = {        
         'type_id'         :fields.many2one('customer.type', 'Type'),
         'industry_id'     :fields.many2one('customer.industry', 'Industry'),
-        'last_name'       :fields.char('Last Name'),        
+        'last_name'       :fields.char('Last Name'),
+        'created_by'      :fields.many2one('res.users', 'Created By'),
+        'created_date'    :fields.char('Created Date'),
     }        
-
+    
+    _defaults = {
+                 'created_by' : lambda obj, cr, uid, context: uid,
+                 'created_date': lambda *a: time.strftime('%Y-%m-01'),
+                 } 
+    
 res_partner()
 
 class customer_type(osv.osv):
@@ -56,7 +68,53 @@ class event_pdbi(osv.osv):
     _columns = {
         'name'              : fields.char('Event Name'),                    
         'date'              : fields.date('Date'),
-        'customer_ids'      : fields.many2many('res.partner','res_partner_event_pdbi_rel','eid','pid','Customers', domain=[('customer','=', True)]),
+        'partner_ids'       : fields.many2many('res.partner', 'name', id2='partner_id', string='Customers'),            
     }
     
+    def create_event(self, cr, uid, ids, context=None):
+        state_name = ''        
+        state_id  = self.pool.get('customer.state').search(cr, uid, [('name','=','Not Started')], context=None)
+        if state_id:
+            state_obj = self.pool.get('customer.state').browse(cr, uid, state_id, context=None)                    
+            for state in state_obj:
+                print state.name
+                state_name = state.id
+                                        
+        for event in self.browse(cr, uid, ids, context=context):            
+            for partner in event.partner_ids:                
+                self.pool.get('customer.event').create(cr, uid, {
+                        'event_id': event.id,
+                        'customer_id': partner.id,
+                        'created_by':uid,
+                        'state':state_name,
+                        'event_date':event.date
+                    })        
+        return True
+    
 event_pdbi()
+
+class customer_event(osv.osv):
+    _name = 'customer.event'
+    _columns = {
+        'event_id'          : fields.many2one('event.pdbi','Event Name'),
+        'event_date'        : fields.date('Event Date'),
+        'created_by'        : fields.many2one('res.users','Created By'),                    
+        'customer_id'       : fields.many2one('res.partner','Customer', domain=[('customer','=',True)]),
+        'state'             : fields.many2one('customer.state','State'),
+        'notes'             : fields.text('Notes'),                                    
+    }
+    
+    def create(self, cr, uid, vals, context=None):
+        new_id = super(customer_event, self).create(cr, uid, vals, context=context)        
+        return new_id    
+    
+customer_event()
+
+class customer_state(osv.osv):
+    _name = 'customer.state'
+    _columns = {
+        'name'          : fields.char('Status'),
+        'description'   : fields.char('Description'),                                        
+    }        
+    
+customer_state()

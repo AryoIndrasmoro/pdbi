@@ -12,6 +12,8 @@
             	<xpath expr="/form/sheet/group/group/field[@name='website']" position="after">
             		<field name="type_id"/>
             		<field name="industry_id"/>
+            		<field name="created_by" readonly="1"/>
+            		<field name="created_date" readonly="1"/>
             	</xpath>            	
         	</field>
         </record>	    		
@@ -22,7 +24,9 @@
             <field name="inherit_id" ref="base.view_partner_tree"/>            
             <field name="arch" type="xml">
             	<field name="name" position="after">
-            		<field name="last_name"/>            		
+            		<field name="last_name"/>        
+            		<field name="created_by"/>
+            		<field name="created_date"/>            		    		
             	</field>            	            
         	</field>
         </record>
@@ -114,18 +118,34 @@
             <field name="arch" type="xml">   
 				<form string="PDBI Events" version="7.0">
 					<header>
-						<button string="Send Email"/>
+						<button name="create_event" string="Create Customer Event" type="object" class="oe_highlight"/>						
 					</header>				
 					<sheet>			
 						<group>					
 							<field name="name" required="True"/>
-							<field name="date"/>						
-							<field name="customer_ids"/>									
+							<field name="date"/>	
+							<field name="partner_ids"/>																													
 						</group>					
 					</sheet>
 				</form>
             </field>
         </record>
+        
+        <record id="event_pdbi_search_form_view" model="ir.ui.view">
+            <field name="name">event.pdbi.search.form</field>
+            <field name="model">event.pdbi</field>            
+            <field name="arch" type="xml">
+            	<search string="Search Events">
+            		<group string="Filter">
+            			<field name="name" string="Event Name" filter_domain="[('name','ilike',self)]"/>
+            			<field name="date" string="Event Date" filter_domain="[('date','ilike',self)]"/>            			            		
+            		</group>
+					<group string="Group By..">											
+						<filter string='Event Date' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'date'}"/>												
+					</group>            		
+            	</search>            	
+            </field>            	
+        </record>        
         
     	<record id="event_pdbi_action_tree" model="ir.actions.act_window">
             <field name="name">PDBI Events</field>
@@ -137,5 +157,106 @@
         
     	<menuitem action="event_pdbi_action_tree" 
     		id="menu_event_pdbi" parent="base.menu_sales" sequence="1"/>
+    	
+    	<record id="customer_state_tree_view" model="ir.ui.view">
+            <field name="name">customer.state.tree</field>
+            <field name="model">customer.state</field>            
+            <field name="arch" type="xml">            	  
+				<tree string="Customer State">					
+					<field name="name" />
+					<field name="description"/>																																																													
+				</tree>
+            </field>
+        </record>
+    	    	
+    	<record id="customer_state_form_view" model="ir.ui.view">
+            <field name="name">customer.state.form</field>
+            <field name="model">customer.state</field>            
+            <field name="arch" type="xml">   
+				<form string="Customer State" version="7.0">												
+					<sheet>			
+						<group>					
+							<field name="name" />
+							<field name="description"/>																								
+						</group>					
+					</sheet>
+				</form>
+            </field>
+        </record>
+        
+    	<record id="customer_state_action_tree" model="ir.actions.act_window">
+            <field name="name">State</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">customer.state</field>            
+            <field name="view_type">form</field>
+          	<field name="view_id" ref="customer_state_tree_view"/>                                                           
+        </record>
+        
+    	<menuitem action="customer_state_action_tree" 
+    		id="menu_customer_state" parent="base.menu_sales" sequence="1"/>
+    		
+    	<record id="customer_event_tree_view" model="ir.ui.view">
+            <field name="name">customer.event.tree</field>
+            <field name="model">customer.event</field>            
+            <field name="arch" type="xml">            	  
+				<tree string="Customer Events">					
+					<field name="event_id" />
+					<field name="event_date" />
+					<field name="created_by" />
+					<field name="customer_id" />	 								
+					<field name="state"/>																																																								
+				</tree>
+            </field>
+        </record>
+    	    	
+    	<record id="customer_event_form_view" model="ir.ui.view">
+            <field name="name">customer.event.form</field>
+            <field name="model">customer.event</field>            
+            <field name="arch" type="xml">   
+				<form string="Customer Events" version="7.0">												
+					<sheet>			
+						<group>					
+							<field name="event_id" readonly="1"/>
+							<field name="event_date" readonly="1"/>
+							<field name="created_by" readonly="1"/>
+							<field name="customer_id" readonly="1"/>								
+							<field name="state"/>
+							<field name="notes"/>																		
+						</group>					
+					</sheet>
+				</form>
+            </field>
+        </record>
+        
+        <record id="customer_event_search_form_view" model="ir.ui.view">
+            <field name="name">customer.event.search.form</field>
+            <field name="model">customer.event</field>            
+            <field name="arch" type="xml">
+            	<search string="Customer Event">
+            		<group string="Filter">
+            			<field name="event_id" string="Event" filter_domain="[('event_id','ilike',self)]"/>
+            			<field name="customer_id" string="Customer" filter_domain="[('customer_id','ilike',self)]"/>            			            		
+            		</group>
+					<group string="Group By..">
+						<filter string='Event' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'event_id'}"/>						
+						<filter string='Customer' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'customer_id'}"/>						
+						<filter string='Event Date' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'event_date'}"/>
+						<filter string='State' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'state'}"/>
+					</group>            		
+            	</search>            	
+            </field>            	
+        </record>           
+        
+    	<record id="customer_event_action_tree" model="ir.actions.act_window">
+            <field name="name">Customer Events</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">customer.event</field>            
+            <field name="view_type">form</field>
+          	<field name="view_id" ref="customer_event_tree_view"/>                                                           
+        </record>
+        
+    	<menuitem action="customer_event_action_tree" 
+    		id="menu_customer_event" parent="base.menu_sales" sequence="1"/>
+    	    	
 	</data>
 </openerp>
