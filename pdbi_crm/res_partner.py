@@ -56,7 +56,7 @@ class event_pdbi(osv.osv):
     _columns = {
         'name'              : fields.char('Event Name'),                    
         'date'              : fields.date('Date'),
-        'customer_ids'      : fields.many2many('res.partner','res_partner_event_pdbi_rel','eid','pid','Customers'),
+        'customer_ids'      : fields.many2many('res.partner','res_partner_event_pdbi_rel','eid','pid','Customers', domain=[('customer','=', True)]),
     }
     
 event_pdbi()

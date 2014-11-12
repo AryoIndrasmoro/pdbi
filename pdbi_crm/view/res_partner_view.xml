@@ -16,6 +16,17 @@
         	</field>
         </record>	    		
         
+        <record id="view_partner_tree_pdbi" model="ir.ui.view">
+            <field name="name">res.partner.tree.pdbi</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>            
+            <field name="arch" type="xml">
+            	<field name="name" position="after">
+            		<field name="last_name"/>            		
+            	</field>            	            
+        	</field>
+        </record>
+        
         <record id="customer_type_tree_view" model="ir.ui.view">
             <field name="name">customer.type.tree</field>
             <field name="model">customer.type</field>            
